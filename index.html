@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ru" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RailTrack-Monitor | Система мониторинга поездов</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons (через замену имен тегов) -->
+    <script src="https://unpkg.com"></script>
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Интеграция кастомных стилей из ТЗ прямо в head для корректной работы до загрузки CSS */
+        body {
+            background-color: #020617;
+            color: #f8fafc;
+        }
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #020617;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1e293b;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #334155;
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+        .animate-blink {
+            animation: blink 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col font-sans selection:bg-indigo-500/30">
+
+    <!-- Header -->
+    <header class="sticky top-0 z-50 glass-panel border-b border-white/5">
+        <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-2 group cursor-pointer">
+                <div class="p-2 bg-indigo-600 rounded-lg">
+                    <i data-lucide="train-front" class="w-6 h-6 text-white"></i>
+                </div>
+                <span class="text-xl font-bold tracking-tight bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">
+                    RailTrack
+                </span>
+            </div>
+            
+            <div class="flex items-center gap-4">
+                <div class="hidden md:flex flex-col items-end mr-2">
+                    <span class="text-xs text-slate-400">Оператор</span>
+                    <span class="text-sm font-medium">Константин В.</span>
+                </div>
+                <div class="w-10 h-10 rounded-full border border-white/10 bg-slate-800 flex items-center justify-center overflow-hidden">
+                    <i data-lucide="user" class="w-5 h-5 text-slate-400"></i>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-7xl mx-auto w-full px-4 py-8">
+        <!-- Hero Section & Search Form -->
+        <section class="mb-12">
+            <div class="text-center mb-8">
+                <h1 class="text-4xl md:text-5xl font-extrabold mb-4">Мониторинг рейсов в реальном времени</h1>
+                <p class="text-slate-400">Управляйте бронированием и отслеживайте наличие мест по всей сети</p>
+            </div>
+
+            <div class="glass-panel p-6 rounded-2xl shadow-2xl">
+                <form id="search-form" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+                    <div class="space-y-1">
+                        <label class="text-xs font-semibold text-slate-400 uppercase ml-1">Откуда</label>
+                        <div class="relative">
+                            <i data-lucide="map-pin" class="absolute left-3 top-3 w-4 h-4 text-slate-500"></i>
+                            <input type="text" placeholder="Москва" required
+                                class="w-full bg-slate-900/50 border border-white/10 rounded-xl py-2.5 pl-10 pr-4 focus:ring-2 focus:ring-indigo-500 outline-none transition-all">
+                        </div>
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-xs font-semibold text-slate-400 uppercase ml-1">Куда</label>
+                        <div class="relative">
+                            <i data-lucide="navigation" class="absolute left-3 top-3 w-4 h-4 text-slate-500"></i>
+                            <input type="text" placeholder="Санкт-Петербург" required
+                                class="w-full bg-slate-900/50 border border-white/10 rounded-xl py-2.5 pl-10 pr-4 focus:ring-2 focus:ring-indigo-500 outline-none transition-all">
+                        </div>
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-xs font-semibold text-slate-400 uppercase ml-1">Дата</label>
+                        <input type="date" required
+                            class="w-full bg-slate-900/50 border border-white/10 rounded-xl py-2.5 px-4 focus:ring-2 focus:ring-indigo-500 outline-none transition-all">
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-xs font-semibold text-slate-400 uppercase ml-1">Время</label>
+                        <input type="time"
+                            class="w-full bg-slate-900/50 border border-white/10 rounded-xl py-2.5 px-4 focus:ring-2 focus:ring-indigo-500 outline-none transition-all">
+                    </div>
+                    <div class="flex items-end">
+                        <button type="submit" 
+                            class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-2.5 rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg shadow-indigo-500/20">
+                            <i data-lucide="search" class="w-5 h-5"></i>
+                            Найти
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- Results Grid -->
+        <div id="results-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Сюда script.js будет рендерить карточки -->
+            <div class="col-span-full py-20 text-center text-slate-500">
+                <i data-lucide="info" class="w-12 h-12 mx-auto mb-4 opacity-20"></i>
+                <p>Введите данные для начала поиска</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="mt-auto border-t border-white/5 py-4 bg-slate-950/50 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-2">
+                <div class="w-2 h-2 rounded-full bg-emerald-500 animate-blink"></div>
+                <span class="text-xs text-slate-400 uppercase tracking-widest">System Status: Operational</span>
+            </div>
+            <p class="text-xs text-slate-500">© 2024 RailTrack Monitor. Тестовая среда v1.0.4</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="script.js"></script>
+    <script>
+        // Инициализация иконок после загрузки
+        lucide.createIcons();
+    </script>
+</body>
+</html>
