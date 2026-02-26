@@ -30,7 +30,7 @@ def send_telegram(message):
     payload = {"chat_id": TELEGRAM_CHAT_ID, "text": message, "parse_mode": "HTML"}
     try:
         requests.post(url, json=payload, timeout=10)
-        time.sleep(2)
+        #time.sleep(2)
     except Exception as e:
         print(f"Ошибка отправки в TG: {e}")
 
@@ -55,7 +55,11 @@ def get_user_params():
 
     return {
         "params": {
-            "from": f_city, "from_exp": f_info["exp"], "to": t_city, "to_exp": t_info["exp"], "date": date_val
+            "from": f_city, 
+            "from_exp": f_info["exp"], 
+            "to": t_city, 
+            "to_exp": t_info["exp"], 
+            "date": date_val
         },
         "target_times": target_times
     }
